@@ -7,6 +7,8 @@
 //
 
 import Foundation
+import SwiftUI
+
 //
 //  MemoryGame.swift
 //  Memorize
@@ -19,6 +21,8 @@ import Foundation
 
 struct MemoryGame<CardContent> where CardContent: Equatable{
     var cards: Array<Card>
+    var theme: Theme
+    var score: Int
     
     var indexOfTheOneAndOnlyFaceUpCard: Int? {
         get {
@@ -37,6 +41,15 @@ struct MemoryGame<CardContent> where CardContent: Equatable{
                 if cards[chosenIndex].content == cards[potentialMatchIndex].content {
                     cards[chosenIndex].isMatched = true
                     cards[potentialMatchIndex].isMatched = true
+                    score += 2
+                } else {
+                    if cards[chosenIndex].isSeen && cards[potentialMatchIndex].isSeen {
+                        score -= 2
+                    } else if cards[chosenIndex].isSeen || cards[potentialMatchIndex].isSeen{
+                        score -= 1
+                    }
+                    cards[chosenIndex].isSeen = true
+                    cards[potentialMatchIndex].isSeen = true
                 }
                 self.cards[chosenIndex].isFaceUp = true
             } else {
@@ -45,19 +58,34 @@ struct MemoryGame<CardContent> where CardContent: Equatable{
         }
     }
     
-    init(numberOfPairsOfCards: Int, cardContentFactory:(Int) -> CardContent) {
-        cards = Array<Card>();
+    init(theme: Theme, numberOfPairsOfCards: Int, cardContentFactory:(Int) -> CardContent) {
+        cards = Array<Card>()
+        score = 0
         for pairIndex in 0..<numberOfPairsOfCards {
             let content = cardContentFactory(pairIndex)
             cards.append(Card(content: content, id: pairIndex * 2))
             cards.append(Card(content: content, id: pairIndex * 2 + 1))
         }
         cards.shuffle()
+        self.theme = theme
+    }
+    
+    func getTheme() -> Theme{
+        return theme
+    }
+    
+    func getThemeColor() -> Color {
+        return theme.color
+    }
+    
+    func displayScore() -> Int {
+        return score
     }
     
     struct Card: Identifiable {
         var isFaceUp: Bool = false
         var isMatched: Bool = false
+        var isSeen: Bool = false
         var content: CardContent
         var id: Int
     }
