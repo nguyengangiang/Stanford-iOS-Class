@@ -17,9 +17,9 @@ struct Theme {
 }
 
 let themes = [halloween, animal, sport, scene, fruit, flag]
-let halloween = Theme(emojis: ["👻", "👺", "💀", "🕷", "🎃"], numberOfCardsShow: 5, name: "Halloween", color: Color.orange)
-let animal = Theme(emojis: ["🐫", "🐨", "🐼", "🐧", "🦚", "🐗", "🦕", "🐶", "🦊", "🦁", "🦧", "🦔"], numberOfCardsShow: Int.random(in: 2...6), name: "Animal", color: Color.blue)
-let sport = Theme(emojis: ["⚽️", "🏀", "🏈", "⚾️", "🎾", "🏸", "🏐", "🥋", "🏹"], numberOfCardsShow: Int.random(in: 2...6), name: "Sport", color: Color.red)
-let scene = Theme(emojis: ["🏙", "🎇", "🌃", "🌌", "🌁", "🌉", "🗾", "🎑", "🏞", "🌅", "🌄", "🌠", "🌆"], numberOfCardsShow: 4, name: "Scenery", color: Color.purple)
-let fruit = Theme(emojis:["🍓", "🍑", "🥥", "🍒", "🍈", "🥝", "🍇", "🍉", "🥭"], numberOfCardsShow: 4, name: "Fruit", color: Color.green)
-let flag = Theme(emojis: ["🇫🇷", "🇷🇺", "🇹🇭", "🇱🇺", "🇳🇱"], numberOfCardsShow: 5, name: "Flag", color: Color.pink)
+private let halloween = Theme(emojis: ["👻", "👺", "💀", "🕷", "🎃"], numberOfCardsShow: 5, name: "Halloween", color: Color.orange)
+private let animal = Theme(emojis: ["🐫", "🐨", "🐼", "🐧", "🦚", "🐗", "🦕", "🐶", "🦊", "🦁", "🦧", "🦔"], numberOfCardsShow: Int.random(in: 2...6), name: "Animal", color: Color.blue)
+private let sport = Theme(emojis: ["⚽️", "🏀", "🏈", "⚾️", "🎾", "🏸", "🏐", "🥋", "🏹"], numberOfCardsShow: Int.random(in: 2...6), name: "Sport", color: Color.red)
+private let scene = Theme(emojis: ["🏙", "🎇", "🌃", "🌌", "🌁", "🌉", "🗾", "🎑", "🏞", "🌅", "🌄", "🌠", "🌆"], numberOfCardsShow: 4, name: "Scenery", color: Color.purple)
+private let fruit = Theme(emojis:["🍓", "🍑", "🥥", "🍒", "🍈", "🥝", "🍇", "🍉", "🥭"], numberOfCardsShow: 4, name: "Fruit", color: Color.green)
+private let flag = Theme(emojis: ["🇫🇷", "🇷🇺", "🇹🇭", "🇱🇺", "🇳🇱"], numberOfCardsShow: 5, name: "Flag", color: Color.pink)
