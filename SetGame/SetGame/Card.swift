@@ -15,7 +15,8 @@ struct Card: Identifiable {
     var color: Int
     var numberOfSymbol: Int
     var shading: Int
-    var isPartOfSet: Bool
+    var isMatched: Bool = false
+    var isSelected: Bool = false
     
     enum symbol: Int, CaseIterable {
         case oval = 1
@@ -26,7 +27,6 @@ struct Card: Identifiable {
             return self.rawValue
         }
     }
-    let allCases = symbol.AllCases.self
         
     enum color: Int, CaseIterable {
         case red = 1
@@ -58,7 +58,7 @@ struct Card: Identifiable {
         }
     }
     
-    func hash(symbol: Int, color: Int, numberOfSymbol: Int, shading: Int) -> Int {
+    private static func hash(symbol: Int, color: Int, numberOfSymbol: Int, shading: Int) -> Int {
         return shading + (symbol * 10) + (color * 100) + (numberOfSymbol * 1000)
     }
     
@@ -67,6 +67,6 @@ struct Card: Identifiable {
         self.color = color
         self.numberOfSymbol = numberOfSymbol
         self.shading = shading
-        self.id = hash(symbol: symbol, color: color, numberOfSymbol: numberOfSymbol, shading: shading)
+        self.id = Card.hash(symbol: symbol, color: color, numberOfSymbol: numberOfSymbol, shading: shading)
     }
 }
