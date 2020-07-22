@@ -10,14 +10,31 @@ import SwiftUI
 
 struct SetGameView: View {
     @ObservedObject var viewModel: SetGameViewModel
+    
     var body: some View {
         Group {
             Grid(self.viewModel.cardsShow) { card in
                 CardView(card: card).onTapGesture {
-                    self.viewModel.choose(card: card)
+                    withAnimation(.easeOut(duration: 0.5)) {
+                        self.viewModel.choose(card: card)
+                    }
                 }
             }
             .padding(4.5)
+            .transition(.offset(x: 0, y: 0))
+            
+            Button(action: {
+                withAnimation(.easeInOut(duration: 0.3)) {
+                    self.viewModel.newGame()
+                }
+            }, label: {Text("New Game")})
+            
+            if (viewModel.remainingCard.count > 3) {
+                Button(action: {
+                    withAnimation(.easeInOut) {
+                    self.viewModel.dealThreeMoreCards()}
+                }, label: {Text("Deal Three More Cards")})
+            }
         }
         .padding(4.5)
     }
@@ -33,28 +50,28 @@ struct CardView: View {
     }
     
     private func body(for size: CGSize) -> some View {
-            ZStack {
-                Group {
-                    VStack {
-                        ForEach(0..<card.numberOfSymbol.rawValue, id: \.self) {_ in
-                            CardContent(card: self.card)
-                                .opacity(self.shading)
-                        }
-                        .frame(width: frameWidth, height: frameHeight, alignment: .center)
-                        .fixedSize()
-                        .overlay(
-                            CardContent(card: self.card)
-                            .stroke(lineWidth: edgeLineWidth)
-                        )
-                        .foregroundColor(self.color)
+        ZStack {
+            Group {
+                VStack {
+                    ForEach(0..<card.numberOfSymbol.rawValue, id: \.self) {_ in
+                        CardContent(card: self.card)
+                            .opacity(self.shading)
                     }
-                    
-                    RoundedRectangle(cornerRadius: cornerRadius).fill(Color.purple).opacity(0.1)
-                    RoundedRectangle(cornerRadius: cornerRadius).stroke(lineWidth: edgeLineWidth).opacity(card.isSelected ? 1 : 0).foregroundColor(Color.pink)
-            }
-            .padding(padding)
+                    .frame(width: size.width/2, height: size.width/4, alignment: .center)
+                    .overlay(
+                        CardContent(card: self.card)
+                        .stroke(lineWidth: edgeLineWidth)
+                    )
+                    .foregroundColor(self.color)
+                }
+                
+                RoundedRectangle(cornerRadius: cornerRadius).fill(Color.purple).opacity(0.1)
+                RoundedRectangle(cornerRadius: cornerRadius).stroke(lineWidth: edgeLineWidth).opacity(card.isSelected ? 1 : 0).foregroundColor(Color.yellow)
         }
+        .padding(padding)
+        .aspectRatio(2/3, contentMode: .fit)
     }
+}
     
     var color: Color {
         let color = card.color

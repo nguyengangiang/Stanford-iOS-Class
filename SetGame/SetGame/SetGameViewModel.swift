@@ -36,6 +36,10 @@ class SetGameViewModel: ObservableObject {
     func newGame() {
         model = SetGameViewModel.createSetGame()
     }
+    
+    func dealThreeMoreCards() {
+        model.dealThreeMoreCards()
+    }
 }
 
 struct SetGameViewModel_Previews: PreviewProvider {
