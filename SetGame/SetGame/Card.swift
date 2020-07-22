@@ -11,10 +11,10 @@ import SwiftUI
 
 struct Card: Identifiable {
     var id: Int
-    var symbol: Int
-    var color: Int
-    var numberOfSymbol: Int
-    var shading: Int
+    var symbol: symbol
+    var color: color
+    var numberOfSymbol: numberOfSymbol
+    var shading: shading
     var isMatched: Bool = false
     var isSelected: Bool = false
     
@@ -62,11 +62,11 @@ struct Card: Identifiable {
         return shading + (symbol * 10) + (color * 100) + (numberOfSymbol * 1000)
     }
     
-    init (symbol: Int, color: Int, numberOfSymbol: Int, shading: Int) {
+    init (symbol: symbol, color: color, numberOfSymbol: numberOfSymbol, shading: shading) {
         self.symbol = symbol
         self.color = color
         self.numberOfSymbol = numberOfSymbol
         self.shading = shading
-        self.id = Card.hash(symbol: symbol, color: color, numberOfSymbol: numberOfSymbol, shading: shading)
+        self.id = Card.hash(symbol: symbol.value, color: color.value, numberOfSymbol: numberOfSymbol.value, shading: shading.value)
     }
 }
