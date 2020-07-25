@@ -86,10 +86,13 @@ struct SetGame {
     }
     // check if 3 cards chosen are a set using the logic that the
     // total hash value of a set is divisible by 3
-    private func isAset(deck: [Card]) -> Bool {
-        let card1 = deck[0]
-        let card2 = deck[1]
-        let card3 = deck[2]
+    func isAset(deck: [Card]) -> Bool {
+        if (deck.count != 3) {
+            return false
+        }
+        var card1 = deck[0]
+        var card2 = deck[1]
+        var card3 = deck[2]
         var sum = card1.id + card2.id + card3.id
         while ((sum / 10) > 1) {
             if ((sum % 10) % 3 != 0) {
@@ -98,6 +101,9 @@ struct SetGame {
                 sum /= 10
             }
         }
+        card1.isMatched = true
+        card2.isMatched = true
+        card3.isMatched = true
         return true
     }
     

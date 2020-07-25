@@ -40,6 +40,10 @@ class SetGameViewModel: ObservableObject {
     func dealThreeMoreCards() {
         model.dealThreeMoreCards()
     }
+    
+    func isASet(deck: [Card]) -> Bool {
+        model.isAset(deck: deck)
+    }
 }
 
 struct SetGameViewModel_Previews: PreviewProvider {
