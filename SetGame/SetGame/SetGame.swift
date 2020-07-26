@@ -75,15 +75,16 @@ struct SetGame {
                 let matchIndex = cardsShow.firstIndex(matching: card)!
                 cardsShow.remove(at: matchIndex)
             }
-            for i in 0..<3 {
-                if (remainingDeck.count > 3) {
-                    cardsShow.append(remainingDeck[i])
-                    remainingDeck.remove(at: i)
-                }
+            potentialMatchDeck.removeAll()
+        }
+        for i in 0..<3 {
+            if (remainingDeck.count > 3) {
+                cardsShow.append(remainingDeck[i])
+                remainingDeck.remove(at: i)
             }
-            potentialMatchDeck.removeFirst(3)
         }
     }
+    
     // check if 3 cards chosen are a set using the logic that the
     // total hash value of a set is divisible by 3
     func isAset(deck: [Card]) -> Bool {

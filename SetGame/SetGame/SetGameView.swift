@@ -14,14 +14,14 @@ struct SetGameView: View {
     var body: some View {
         Group {
             Button(action: {
-                withAnimation(.easeInOut(duration: 0.3)) {
+                withAnimation(.easeInOut(duration: 1)) {
                     self.viewModel.newGame()
                 }
             }, label: {Text("New Game")})
             
             GeometryReader { geometry in
                 Grid(self.viewModel.cardsShow) { card in
-                    CardView(card: card).onTapGesture {
+                    CardView(card: card, chosenCardCount: self.viewModel.chosenDeck.count).onTapGesture {
                         withAnimation(.easeOut(duration: 0.5)) {
                             self.viewModel.choose(card: card)
                         }
@@ -30,7 +30,7 @@ struct SetGameView: View {
                 }
                 .padding(4.5)
                 .onAppear() {
-                    withAnimation(.easeOut(duration: 0.8)) {
+                    withAnimation(.easeOut(duration: 1)) {
                         self.viewModel.newGame()
                     }
                 }
@@ -52,6 +52,7 @@ struct SetGameView: View {
 
 struct CardView: View {
     var card: Card
+    var chosenCardCount: Int
         
     var body: some View {
         GeometryReader { geometry in
@@ -64,6 +65,8 @@ struct CardView: View {
             Group {
                 RoundedRectangle(cornerRadius: cornerRadius).fill(Color.purple).opacity(0.1)
                 RoundedRectangle(cornerRadius: cornerRadius).stroke(lineWidth: edgeLineWidth).opacity(card.isSelected ? 1 : 0).foregroundColor(Color.yellow)
+                RoundedRectangle(cornerRadius: cornerRadius).foregroundColor(card.isMatched ? Color.blue : Color.red)
+                    .opacity(card.isSelected && chosenCardCount == 3 ? 0.5 : 0)
                
                 VStack {
                     ForEach(0..<card.numberOfSymbol.rawValue, id: \.self) {_ in
