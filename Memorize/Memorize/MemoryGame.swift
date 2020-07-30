@@ -98,6 +98,7 @@ struct MemoryGame<CardContent> where CardContent: Equatable{
             }
         }
         
+        
         var isSeen: Bool = false
         var content: CardContent
         var id: Int
