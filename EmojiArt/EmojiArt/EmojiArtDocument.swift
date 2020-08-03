@@ -10,11 +10,27 @@ import SwiftUI
 
 class EmojiArtDocument: ObservableObject {
     
-    static let palette: String = "🦔🦕🥰⚽️🥑🥗"
+    static let palette: String = "🦔🦕🥰⚽️🥑🥗🌝🌞🌤🦧"
+    
+    // @Published
+    // workaround for property obbserver problem with property wrappers
+    private var emojiArt: EmojiArt {
+        willSet{
+            objectWillChange.send()
+        }
+        didSet {
+            UserDefaults.standard.set(emojiArt.json, forKey: EmojiArtDocument.untitled)
+        }
+    }
+    
+    private static let untitled = "EmojiArtDocument.Untitled"
+    
+    init() {
+        emojiArt = EmojiArt(json: UserDefaults.standard.data(forKey: EmojiArtDocument.untitled)) ?? EmojiArt()
+        fetchBackgroundImageData()
+    }
+    
     @Published private(set) var backgroundImage: UIImage?
-    
-    @Published private var emojiArt: EmojiArt = EmojiArt()
-    
     var emojis: [EmojiArt.Emoji] {emojiArt.emojis}
     
     // MARK: Intents
