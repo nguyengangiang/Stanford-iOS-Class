@@ -31,24 +31,33 @@ struct EmojiArtDocumentView: View {
                             .scaleEffect(self.zoomScale)
                             .offset(self.panOffset)
                     )
-                        .gesture(self.doubleTapToZoom(in: geometry.size))
-                    ForEach(self.document.emojis) { emoji in
-                        Text(emoji.text)
-                            .font(animatableWithSize: emoji.fontSize * self.zoomScale)
-                            .position(self.position(for: emoji, in: geometry.size))
-                            .gesture(TapGesture(count: 1)
-                                    .onEnded {
-                                        self.document.chooseEmoji(emoji: emoji)
-                                }
-                            .exclusively(before: self.doubleTapToZoom(in: geometry.size)))
-                            .opacity(emoji.isSelected ? 1.0 : 0.5)
-                        }
-
+                    .gesture(self.doubleTapToZoom(in: geometry.size))
+                    .onTapGesture {
+                        self.document.deselectAll()
                     }
-                .clipped()
-                .onTapGesture {
-                    self.document.deSelectAll()
+
+                    ForEach(self.document.emojis) { emoji in
+                        ZStack {
+                            Circle()
+                                .fill(Color.yellow)
+                                .opacity(emoji.isSelected ? 0.7 : 0)
+                                .frame(width: emoji.fontSize * 1.2 * self.zoomScale, height: emoji.fontSize * 1.2 * self.zoomScale)
+                            Text(emoji.text)
+                               .gesture(TapGesture(count: 1)
+                               .onEnded {
+                                   self.document.toggleMatching(for: emoji)
+                               }
+                                .exclusively(before: self.doubleTapToZoom(in: geometry.size)))
+                                .gesture(self.dragGesture())
+                                .font(animatableWithSize: emoji.fontSize * self.zoomScale)
+                                .onLongPressGesture() {
+                                    self.document.removeEmoji(emoji)
+                                }
+                        }
+                        .position(self.position(for: emoji, in: geometry.size))
+                    }
                 }
+                .clipped()
                 .gesture(self.panGesture())
                 .gesture(self.zoomGesture())
                 .edgesIgnoringSafeArea([.horizontal, .bottom])
@@ -75,10 +84,18 @@ struct EmojiArtDocumentView: View {
     private func zoomGesture() -> some Gesture {
         MagnificationGesture()
             .updating($gestureZoomScale) { latestGestureScale, gestureZoomScale, transaction in
-                gestureZoomScale = latestGestureScale
+                if (self.document.selectedEmojis.isEmpty) {
+                    gestureZoomScale = latestGestureScale
+                }
             }
             .onEnded { finalGestureScale in
-                self.steadyStateZoomScale *= finalGestureScale
+                if (!self.document.selectedEmojis.isEmpty) {
+                    for emoji in self.document.selectedEmojis {
+                        self.document.scaleEmoji(emoji, by: finalGestureScale)
+                    }
+                } else {
+                    self.steadyStateZoomScale *= finalGestureScale
+                }
             }
     }
 
@@ -92,13 +109,41 @@ struct EmojiArtDocumentView: View {
     private func panGesture() -> some Gesture {
         DragGesture()
             .updating($gesturePanOffset) { latestDragGestureValue, gesturePanOffset, transaction in
-                gesturePanOffset = latestDragGestureValue.translation / self.zoomScale
+                if (self.document.selectedEmojis.isEmpty) {
+                    gesturePanOffset = latestDragGestureValue.translation / self.zoomScale
+                }
         }
         .onEnded { finalDragGestureValue in
-            self.steadyStatePanOffset = self.steadyStatePanOffset + (finalDragGestureValue.translation / self.zoomScale)
+            if (self.document.selectedEmojis.isEmpty) {
+                self.steadyStatePanOffset = self.steadyStatePanOffset + (finalDragGestureValue.translation / self.zoomScale)
+            }
         }
     }
 
+    @State private var steadyStateDragOffset: CGSize = .zero
+    @GestureState private var gestureDragOffset: CGSize = .zero
+    
+    private var DragOffset: CGSize {
+        (steadyStateDragOffset + gestureDragOffset) * zoomScale
+    }
+    
+    private func dragGesture() -> some Gesture {
+        DragGesture()
+            .updating($gestureDragOffset) { latestDragGestureValue, gestureDragOffset, transaction in
+                if (!self.document.selectedEmojis.isEmpty) {
+                    gestureDragOffset = latestDragGestureValue.translation / self.zoomScale
+                }
+            }
+        .onEnded{ finalDragGestureValue in
+            withAnimation(.linear(duration: 0.1)) {
+                self.steadyStateDragOffset = (finalDragGestureValue.translation / self.zoomScale)
+                for emoji in self.document.selectedEmojis {
+                    self.document.moveEmoji(emoji, by: self.steadyStateDragOffset)
+                }
+            }
+        }
+    }
+    
     
     private func doubleTapToZoom(in size: CGSize) -> some Gesture {
         TapGesture(count: 2)

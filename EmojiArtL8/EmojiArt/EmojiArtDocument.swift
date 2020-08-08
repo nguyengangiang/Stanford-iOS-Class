@@ -26,13 +26,18 @@ class EmojiArtDocument: ObservableObject
     
     init() {
         emojiArt = EmojiArt(json: UserDefaults.standard.data(forKey: EmojiArtDocument.untitled)) ?? EmojiArt()
+        for emoji in selectedEmojis {
+            if (emoji.isSelected == true) {
+                toggleMatching(for: emoji)
+            }
+        }
         fetchBackgroundImageData()
     }
         
     @Published private(set) var backgroundImage: UIImage?
     
     var emojis: [EmojiArt.Emoji] { emojiArt.emojis }
-    var selectedEmojis = Set<EmojiArt.Emoji>()
+    @Published var selectedEmojis = Set<EmojiArt.Emoji>()
     
     // MARK: - Intent(s)
     
@@ -58,20 +63,29 @@ class EmojiArtDocument: ObservableObject
         fetchBackgroundImageData()
     }
     
-    func chooseEmoji(emoji: EmojiArt.Emoji) {
-        emojiArt.chooseEmoji(emoji: emoji)
-        if (emoji.isSelected == true) {
+    func toggleMatching(for emoji: EmojiArt.Emoji) {
+        emojiArt.selectEmoji(for: emoji)
+        if (emoji.isSelected == false) {
             selectedEmojis.insert(emoji)
         } else {
-            if (selectedEmojis.contains(emoji)) {
-                selectedEmojis.remove(emoji)
+            if (selectedEmojis.contains(matching: emoji)) {
+                selectedEmojis.remove(selectedEmojis[selectedEmojis.firstIndex(matching: emoji)!])
             }
         }
     }
     
-    func deSelectAll() {
+    func removeEmoji(_ emoji: EmojiArt.Emoji) {
+        emojiArt.removeEmoji(emoji)
+        if (selectedEmojis.contains(matching: emoji)) {
+            selectedEmojis.remove(selectedEmojis[selectedEmojis.firstIndex(matching: emoji)!])
+        }
+    }
+    
+    func deselectAll() {
         for emoji in selectedEmojis {
-            emojiArt.chooseEmoji(emoji: emoji)
+            if (emoji.isSelected == true) {
+                toggleMatching(for: emoji)
+            }
         }
         selectedEmojis.removeAll()
     }

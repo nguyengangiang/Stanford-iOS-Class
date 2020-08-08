@@ -51,7 +51,12 @@ struct EmojiArt: Codable {
         emojis.append(Emoji(text: text, x: x, y: y, size: size, id: uniqueEmojiId))
     }
     
-    mutating func chooseEmoji(emoji: Emoji) {
-        emojis[emojis.firstIndex(matching: emoji)!].isSelected = !emojis[emojis.firstIndex(matching: emoji)!].isSelected
+    mutating func selectEmoji(for emoji: Emoji) {
+        emojis[emojis.firstIndex(matching: emoji)!].isSelected = !emojis[emojis.firstIndex(matching: emoji)!].isSelected 
     }
+    
+    mutating func removeEmoji(_ emoji: Emoji) {
+        emojis.remove(at: emojis.firstIndex(matching: emoji)!)
+    }
+
 }
