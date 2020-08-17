@@ -135,7 +135,7 @@ struct EmojiArtDocumentView: View {
                 }
             }
         .onEnded{ finalDragGestureValue in
-            withAnimation(.linear(duration: 0.1)) {
+            withAnimation(.linear(duration: 0.3)) {
                 self.steadyStateDragOffset = (finalDragGestureValue.translation / self.zoomScale)
                 for emoji in self.document.selectedEmojis {
                     self.document.moveEmoji(emoji, by: self.steadyStateDragOffset)

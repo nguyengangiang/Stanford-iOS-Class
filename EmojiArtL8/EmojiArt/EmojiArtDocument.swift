@@ -26,11 +26,7 @@ class EmojiArtDocument: ObservableObject
     
     init() {
         emojiArt = EmojiArt(json: UserDefaults.standard.data(forKey: EmojiArtDocument.untitled)) ?? EmojiArt()
-        for emoji in selectedEmojis {
-            if (emoji.isSelected == true) {
-                toggleMatching(for: emoji)
-            }
-        }
+        deselectAll()
         fetchBackgroundImageData()
     }
         
@@ -65,10 +61,11 @@ class EmojiArtDocument: ObservableObject
     
     func toggleMatching(for emoji: EmojiArt.Emoji) {
         emojiArt.selectEmoji(for: emoji)
-        if (emoji.isSelected == false) {
-            selectedEmojis.insert(emoji)
-        } else {
-            if (selectedEmojis.contains(matching: emoji)) {
+        for emoji in emojis {
+            if (emoji.isSelected) {
+                selectedEmojis.insert(emoji)
+            }
+            if (!emoji.isSelected && selectedEmojis.contains(matching: emoji)) {
                 selectedEmojis.remove(selectedEmojis[selectedEmojis.firstIndex(matching: emoji)!])
             }
         }
@@ -82,8 +79,8 @@ class EmojiArtDocument: ObservableObject
     }
     
     func deselectAll() {
-        for emoji in selectedEmojis {
-            if (emoji.isSelected == true) {
+        for emoji in emojis {
+            if (emoji.isSelected) {
                 toggleMatching(for: emoji)
             }
         }
