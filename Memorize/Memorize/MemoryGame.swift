@@ -21,8 +21,8 @@ import Foundation
 
 struct MemoryGame<CardContent> where CardContent: Equatable{
     var cards: Array<Card>
-    var theme: Theme
     var score: Int
+    var theme: Theme
     
     private(set) var indexOfTheOneAndOnlyFaceUpCard: Int? {
         get {
@@ -74,7 +74,7 @@ struct MemoryGame<CardContent> where CardContent: Equatable{
         return theme
     }
     
-    func getThemeColor() -> Color {
+    func getThemeColor() -> UIColor.RGB {
         return theme.color
     }
     
@@ -97,8 +97,7 @@ struct MemoryGame<CardContent> where CardContent: Equatable{
                 stopUsingBonusTime()
             }
         }
-        
-        
+                
         var isSeen: Bool = false
         var content: CardContent
         var id: Int

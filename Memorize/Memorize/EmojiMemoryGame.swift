@@ -10,11 +10,12 @@ import SwiftUI
 
 class EmojiMemoryGame: ObservableObject {
     @Published private var model: MemoryGame<String> = EmojiMemoryGame.createMemoryGame()
+    private static let untitled = "EmojiMemoryGame.Untitled"
     
-
     private static func createMemoryGame() -> MemoryGame<String> {
-        let theme = themes[Int.random(in: 0...5)]
-        return MemoryGame<String>(theme: theme, numberOfPairsOfCards: theme.numberOfCardsShow!) {pairIndex in
+        let theme = Theme(json: UserDefaults.standard.data(forKey: untitled)) ?? themes[Int.random(in: 0...4)]
+        print("json = \(theme.json?.utf8 ?? "nil")")
+        return MemoryGame<String>(theme: theme, numberOfPairsOfCards: theme.numberOfCardsShow) {pairIndex in
             return theme.emojis[pairIndex]
         }
     }
@@ -46,5 +47,4 @@ struct EmojiMemoryGame_Previews: PreviewProvider {
         /*@START_MENU_TOKEN@*/Text("Hello, World!")/*@END_MENU_TOKEN@*/
     }
 }
-
 
