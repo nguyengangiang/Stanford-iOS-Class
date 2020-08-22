@@ -10,7 +10,7 @@ import SwiftUI
 
 struct EmojiMemoryGameView: View {
     @ObservedObject var viewModel: EmojiMemoryGame
-    
+
     var body: some View {
         Group {
             Text(self.viewModel.getTheme().name)
@@ -28,7 +28,7 @@ struct EmojiMemoryGameView: View {
             
             Button( action: {
                 withAnimation(.easeInOut) {
-                self.viewModel.newGame()}
+                    self.viewModel.newGame(theme: self.viewModel.getTheme())}
             }, label:  {Text("New Game") })
         }
     }
@@ -87,12 +87,3 @@ struct CardView: View {
         min(size.width, size.height)*fontScale
     }
 }
-    
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        let game = EmojiMemoryGame()
-        game.choose(card: game.cards[0])
-        return EmojiMemoryGameView(viewModel: game)
-    }
-}
-

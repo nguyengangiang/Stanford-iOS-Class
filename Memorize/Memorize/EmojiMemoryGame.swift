@@ -9,12 +9,15 @@
 import SwiftUI
 
 class EmojiMemoryGame: ObservableObject {
-    @Published private var model: MemoryGame<String> = EmojiMemoryGame.createMemoryGame()
-    private static let untitled = "EmojiMemoryGame.Untitled"
+    @Published private var model: MemoryGame<String>
+    private var theme: Theme
     
-    private static func createMemoryGame() -> MemoryGame<String> {
-        let theme = Theme(json: UserDefaults.standard.data(forKey: untitled)) ?? themes[Int.random(in: 0...4)]
-        print("json = \(theme.json?.utf8 ?? "nil")")
+    init(theme: Theme) {
+        self.theme = theme
+        model = EmojiMemoryGame.createMemoryGame(theme: theme)
+    }
+    
+    private static func createMemoryGame(theme: Theme) -> MemoryGame<String> {
         return MemoryGame<String>(theme: theme, numberOfPairsOfCards: theme.numberOfCardsShow) {pairIndex in
             return theme.emojis[pairIndex]
         }
@@ -37,8 +40,9 @@ class EmojiMemoryGame: ObservableObject {
     func displayScore() -> String{
         String(model.displayScore())
     }
-    func newGame() {
-        model = EmojiMemoryGame.createMemoryGame()
+    
+    func newGame(theme: Theme) {
+        model = EmojiMemoryGame.createMemoryGame(theme: theme)
     }
 }
 
