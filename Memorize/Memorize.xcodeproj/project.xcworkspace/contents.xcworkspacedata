@@ -2,6 +2,12 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:Grid.swift">
+   </FileRef>
+   <FileRef
+      location = "group:../../EmojiArt L10/EmojiArt/Grid.swift">
+   </FileRef>
+   <FileRef
       location = "self:">
    </FileRef>
 </Workspace>

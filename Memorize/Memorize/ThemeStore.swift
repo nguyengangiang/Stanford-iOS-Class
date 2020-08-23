@@ -15,8 +15,12 @@ class ThemeStore: ObservableObject {
     @Published var themes = [animal, flag, scene, fruit, sport, halloween]
     private static let untitled = "MemoryStore.Untitled"
 
-    func name(for theme: Theme) -> String {
-        return theme.name
+    func name(for theme: Theme) -> String? {
+        if (themes.contains(theme)) {
+            return theme.name
+        } else {
+            return nil
+        }
     }
     
     func addTheme(named name: String = "Untitled") {
