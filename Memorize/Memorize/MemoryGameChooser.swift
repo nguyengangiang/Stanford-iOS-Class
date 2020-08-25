@@ -13,15 +13,14 @@ struct MemoryGameChooser: View {
     @State private var editMode: EditMode = .inactive
     @State private var showPaletteEditor = false
     
-    
     var body: some View {
         NavigationView {
             List {
-                ForEach(store.themes) {theme in
+                ForEach(self.store.themes) {theme in
                     NavigationLink(destination: EmojiMemoryGameView(viewModel: EmojiMemoryGame(theme: theme))
                         .navigationBarTitle(self.store.name(for: theme) ?? ""))
                     {
-                        Image(systemName: "pencil.circle.fill").accessibility(hidden: self.editMode == .inactive).frame(width: self.editMode == .inactive ? 0 : 2, height: self.editMode == .inactive ? 0 : 2).opacity(self.editMode == .inactive ? 0 : 1)
+                        Image(systemName: "pencil.circle.fill").accessibility(hidden: self.editMode == .inactive).opacity(self.editMode == .inactive ? 0 : 1)
                             .imageScale(.large).foregroundColor(Color(theme.color))
                         .onTapGesture {
                             if (self.editMode == .active) {
@@ -33,13 +32,11 @@ struct MemoryGameChooser: View {
                                             .environmentObject(self.store)
                                             .frame(minWidth: 300, minHeight: 500)
                         }
-                        EditableText(self.store.name(for: theme) ?? "", isEditing: self.editMode.isEditing) { name in
-                            self.store.themes[self.store.themes.firstIndex(matching: theme)!].setName(name)
-                        }
+                        Text(self.store.name(for: theme) ?? "").bold().foregroundColor(Color(theme.color))
                         Text("\(theme.cardShow()) pairs of \(theme.emojiString())")
                     }
                 }
-                .onDelete{ indexSet in
+                .onDelete { indexSet in
                     indexSet.map { self.store.themes[$0]}.forEach { theme in
                         self.store.removeTheme(theme: theme)
                     }
@@ -82,8 +79,7 @@ struct ThemeEditor: View {
                    TextField("Palette Name", text: $themeName, onEditingChanged: {
                        began in
                        if !began {
-                           self.store.themes[self.store.themes.firstIndex(matching: self.chosenTheme)!].setName(self.themeName)
-
+                        self.store.setName(self.chosenTheme, name: self.themeName)
                        }
                    })
                    TextField("Add Emoji", text: $emojisToAdd, onEditingChanged: {

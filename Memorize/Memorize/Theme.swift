@@ -46,7 +46,7 @@ struct Theme: Codable, Hashable, Identifiable {
         }
     }
     
-    mutating func setName(_ name: String) {
+    mutating func setName(name: String) {
         self.name = name
     }
     
@@ -63,7 +63,7 @@ struct Theme: Codable, Hashable, Identifiable {
     }
     
     mutating func changeNumCardShow(by amount: Int) {
-        if (self.numberOfCardsShow + amount > 1 && self.numberOfCardsShow + amount < emojis.count) {
+        if (self.numberOfCardsShow + amount > 1 && self.numberOfCardsShow + amount <= emojis.count) {
             self.numberOfCardsShow += amount
         }
     }
@@ -77,14 +77,6 @@ struct Theme: Codable, Hashable, Identifiable {
     }
 }
 
-let halloween = Theme(emojis:["👻", "👺", "💀", "🕷", "🎃"], name: "Halloween", color: UIColor.RGB(red: 255, green: 165, blue: 0, alpha: 255))
-let animal = Theme(emojis: [ "🦚", "🐗", "🦕", "🦧", "🦔"], name: "Animal", color: UIColor.RGB(red: 0, green: 0, blue: 200, alpha: 255))
-let sport = Theme(emojis: ["⚽️", "🏀", "🏈", "⚾️", "🎾", "🏸"], name: "Sport", color: UIColor.RGB(red: 0, green: 200, blue: 0, alpha: 255))
-let scene = Theme(emojis: ["🏙", "🎇", "🌃", "🌌", "🌁", "🌉"], name: "Scenery", color: UIColor.RGB(red: 127, green: 0, blue: 128, alpha: 255))
-let fruit = Theme(emojis:["🥝", "🍇", "🍉", "🥭"], name: "Fruit", color: UIColor.RGB(red: 0, green: 100, blue: 50, alpha: 255))
-let flag = Theme(emojis:["🇫🇷", "🇷🇺", "🇹🇭", "🇱🇺", "🇳🇱"], name: "Flag", color: UIColor.RGB(red: 200, green: 0, blue: 0, alpha: 250))
-
-let defaultTheme = Theme(emojis: ["😀", "😂", "😭"], name: "Untitled", color: UIColor.RGB(red: 255, green: 165, blue: 0, alpha: 255))
 
 extension Data {
     // just a simple converter from a Data to a String
