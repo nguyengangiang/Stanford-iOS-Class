@@ -21,10 +21,6 @@ struct Theme: Codable, Hashable, Identifiable {
     
     let id: UUID
     
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(id)
-    }
-    
     init(emojis: [String], name: String, color: UIColor.RGB, id: UUID? = nil)
     {
         self.emojis = emojis
@@ -36,6 +32,11 @@ struct Theme: Codable, Hashable, Identifiable {
     
     var json: Data? {
         return try? JSONEncoder().encode(self)
+    }
+    
+    init() {
+        self.init(emojis: ["😀", "😂", "😭"], name: "Untitled", color: UIColor.RGB(red: 255, green: 165, blue: 0, alpha: 255))
+
     }
     
     init?(json: Data?) {

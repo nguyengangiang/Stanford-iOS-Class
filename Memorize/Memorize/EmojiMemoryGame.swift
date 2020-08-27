@@ -7,14 +7,37 @@
 //
 
 import SwiftUI
+import Combine
+import Foundation
 
 class EmojiMemoryGame: ObservableObject {
     @Published private var model: MemoryGame<String>
-    private var theme: Theme
+    @Published private var theme: Theme
+
+//    init(theme: Theme) {
+//        self.theme = theme
+//        self.model = EmojiMemoryGame.createMemoryGame(theme: theme)
+//    }
     
+//    static func == (lhs: EmojiMemoryGame, rhs: EmojiMemoryGame) -> Bool {
+//        lhs.id == rhs.id
+//    }
+//
+//    let id: UUID
+//
+//    func hash(into hasher: inout Hasher) {
+//        hasher.combine(id)
+//    }
+
+    private var autosaveCancellable: AnyCancellable?
+
     init(theme: Theme) {
-        self.theme = theme
-        model = EmojiMemoryGame.createMemoryGame(theme: theme)
+        self.model = EmojiMemoryGame.createMemoryGame(theme: theme)
+        let defaultsKey = "EmojiMemoryGame.State"
+        self.theme = Theme(json: UserDefaults.standard.data(forKey: defaultsKey)) ?? theme
+        autosaveCancellable = $theme.sink {theme in
+            UserDefaults.standard.set(theme.json, forKey: defaultsKey)
+        }
     }
     
     private static func createMemoryGame(theme: Theme) -> MemoryGame<String> {
@@ -27,18 +50,18 @@ class EmojiMemoryGame: ObservableObject {
     var cards: Array<MemoryGame<String>.Card> {
         model.cards
     }
-    //MARK: - Intent(s)
+    //MARK: - Intent(s
     
     func choose(card: MemoryGame<String>.Card) {
         model.choose(card: card)
     }
     
     func getTheme() -> Theme {
-        model.getTheme()
+        return model.getTheme()
     }
     
     func displayScore() -> String{
-        String(model.displayScore())
+        return String(model.displayScore())
     }
     
     func newGame(theme: Theme) {

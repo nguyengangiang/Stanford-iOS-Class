@@ -10,21 +10,19 @@ import SwiftUI
 import Combine
 
 class ThemeStore: ObservableObject {
-    let name: String
+    let name: String = "EmojiMemoryGame"
     private var autosave: AnyCancellable?
-    @Published var theme: Theme
-    
-    private var halloween = Theme(emojis:["👻", "👺", "💀", "🕷", "🎃"], name: "Halloween", color: UIColor.RGB(red: 255, green: 165, blue: 0, alpha: 255))
-    private var animal =  Theme(json: UserDefaults.standard.data(forKey: ThemeStore.untitled)) ?? Theme(emojis: [ "🦚", "🐗", "🦕", "🦧", "🦔"], name: "Animal", color: UIColor.RGB(red: 0, green: 0, blue: 200, alpha: 255))
-    private var sport =  Theme(json: UserDefaults.standard.data(forKey: ThemeStore.untitled)) ??  Theme(emojis: ["⚽️", "🏀", "🏈", "⚾️", "🎾", "🏸"], name: "Sport", color: UIColor.RGB(red: 0, green: 200, blue: 0, alpha: 255))
-    private var scene =  Theme(json: UserDefaults.standard.data(forKey: ThemeStore.untitled)) ??  Theme(emojis: ["🏙", "🎇", "🌃", "🌌", "🌁", "🌉"], name: "Scenery", color: UIColor.RGB(red: 127, green: 0, blue: 128, alpha: 255))
-    private var fruit =  Theme(json: UserDefaults.standard.data(forKey: ThemeStore.untitled)) ?? Theme(emojis:["🥝", "🍇", "🍉", "🥭"], name: "Fruit", color: UIColor.RGB(red: 0, green: 100, blue: 50, alpha: 255))
-    private var flag =  Theme(json: UserDefaults.standard.data(forKey: ThemeStore.untitled)) ?? Theme(emojis:["🇫🇷", "🇷🇺", "🇹🇭", "🇱🇺", "🇳🇱"], name: "Flag", color: UIColor.RGB(red: 200, green: 0, blue: 0, alpha: 250))
+    // private static let untitled = "MemoryStore.Untitled"
 
-    let defaultTheme = Theme(emojis: ["😀", "😂", "😭"], name: "Untitled", color: UIColor.RGB(red: 255, green: 165, blue: 0, alpha: 255))
-    
+    static var halloween = Theme(emojis:["👻", "👺", "💀", "🕷", "🎃"], name: "Halloween", color: UIColor.RGB(red: 255, green: 15, blue: 0, alpha: 255))
+    static var animal =  Theme(emojis: [ "🦚", "🐗", "🦕", "🦧", "🦔"], name: "Animal", color: UIColor.RGB(red: 0, green: 0, blue: 200, alpha: 255))
+    static var sport = Theme(emojis: ["⚽️", "🏀", "🏈", "⚾️", "🎾", "🏸"], name: "Sport", color: UIColor.RGB(red: 0, green: 200, blue: 0, alpha: 255))
+    static var scene =  Theme(emojis: ["🏙", "🎇", "🌃", "🌌", "🌁", "🌉"], name: "Scenery", color: UIColor.RGB(red: 127, green: 0, blue: 128, alpha: 255))
+    static var fruit =  Theme(emojis:["🥝", "🍇", "🍉", "🥭"], name: "Fruit", color: UIColor.RGB(red: 0, green: 100, blue: 50, alpha: 255))
+    static var flag =  Theme(emojis:["🇫🇷", "🇷🇺", "🇹🇭", "🇱🇺", "🇳🇱"], name: "Flag", color: UIColor.RGB(red: 200, green: 0, blue: 0, alpha: 250))
+
     @Published var themes : [Theme]
-    private static let untitled = "MemoryStore.Untitled"
+    
 
     func name(for theme: Theme) -> String? {
         if (themes.contains(theme)) {
@@ -41,7 +39,7 @@ class ThemeStore: ObservableObject {
     }
     
     func addTheme(named name: String = "Untitled") {
-        let newTheme = Theme(emojis: defaultTheme.emojis, name: defaultTheme.name, color: defaultTheme.color)
+        let newTheme = Theme()
         themes.append(newTheme)
     }
     
@@ -49,14 +47,33 @@ class ThemeStore: ObservableObject {
         themes.remove(at: themes.firstIndex(matching: theme)!)
     }
     
-    init(named name: String = "Memory Game") {
-        self.name = name
-        let defaultsKey = "ThemeStore.\(name)"
-        themes = [animal, flag, scene, fruit, sport, halloween]
-        theme = Theme(json: UserDefaults.standard.data(forKey: ThemeStore.untitled)) ?? Theme(emojis: ["😀", "😂", "😭"], name: "Untitled", color: UIColor.RGB(red: 255, green: 165, blue: 0, alpha: 255))
-        autosave = $themes.sink {_ in
-            UserDefaults.standard.set(self.theme.json, forKey: defaultsKey)
+    func json<T: Encodable>( themeList : T) ->Data  {
+        var json : Data
+        // encode the theme List into json
+        do {
+            let encoder = JSONEncoder()
+            json = try encoder.encode(themeList)
+        } catch {
+            fatalError("Couldn't encode themeList as \(T.self):\n\(error)")
+        }
+        return json
+    }
+    
+    init() {
+        let defaultsKey = "MemorizeStore.\(name)"
+        let json = UserDefaults.standard.data(forKey: defaultsKey)
+        if json != nil, let newThemeList = try? JSONDecoder().decode([Theme].self, from: json!) {
+            self.themes = newThemeList
+        } else {
+            self.themes = [ThemeStore.halloween, ThemeStore.animal, ThemeStore.flag, ThemeStore.fruit, ThemeStore.scene, ThemeStore.sport]
+        }
+        autosave = $themes.sink {theme in
+            let t = self.json(themeList: theme)
+            UserDefaults.standard.set(t, forKey: defaultsKey)
+            print(t.utf8 as Any)
+            print(defaultsKey)
         }
     }
 }
+
 

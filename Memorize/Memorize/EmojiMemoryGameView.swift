@@ -77,9 +77,7 @@ struct CardView: View {
             .cardify(isFaceUp: card.isFaceUp)
                 // .aspectRatio(2/3, contentMode: .fill)
             .transition(AnyTransition.scale)
-
         }
-
     }
     // MARK: - Drawing Constants
     private let fontScale: CGFloat = 0.7
