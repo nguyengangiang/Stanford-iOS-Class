@@ -12,30 +12,30 @@ struct MemoryGameChooser: View {
     @EnvironmentObject var store: ThemeStore
     @State private var editMode: EditMode = .inactive
     @State private var showPaletteEditor = false
+    @State private var chosenTheme : Theme = Theme()
 
     var body: some View {
         NavigationView {
             List {
-                ForEach(self.store.themes) {chosenTheme in
-                    NavigationLink(destination: EmojiMemoryGameView(viewModel: EmojiMemoryGame.init(theme: chosenTheme))
-                        .navigationBarTitle(self.store.name(for: chosenTheme) ?? ""))
+                ForEach(self.store.themes) {theme in
+                    NavigationLink(destination: EmojiMemoryGameView(viewModel: EmojiMemoryGame.init(theme: theme))
+                        .navigationBarTitle(self.store.name(for: theme) ?? ""))
                     {
-                        Image(systemName: "pencil.circle.fill").opacity(self.editMode == .inactive ? 0 : 1)
-                            .onTapGesture {
-                                if (self.editMode == .active) {
-                                    self.showPaletteEditor = true
-                                }
+                        Image(systemName: "pencil.circle.fill").opacity(self.editMode == .inactive ? 0 : 1).imageScale(.large).foregroundColor(Color(theme.color))
+                        .onTapGesture {
+                            if (self.editMode == .active) {
+                                self.showPaletteEditor = true
+                                self.chosenTheme = theme
                             }
-                            .popover(isPresented: self.$showPaletteEditor) {
-                                ThemeEditor(chosenTheme: self.$store.themes[self.store.themes.firstIndex(matching: chosenTheme)!], isShowing: self.$showPaletteEditor)
-                                                .environmentObject(self.store)
-                                                .frame(minWidth: 300, minHeight: 500)
-                            }
-                            .imageScale(.large).foregroundColor(Color(chosenTheme.color))
-                        Text(self.store.name(for: chosenTheme) ?? "").bold().foregroundColor(Color(chosenTheme.color))
-                        Text("\(chosenTheme.cardShow()) pairs of \(chosenTheme.emojiString())")
+                        }
+                        .popover(isPresented: self.$showPaletteEditor) {
+                            ThemeEditor(chosenTheme: self.$chosenTheme, isShowing: self.$showPaletteEditor)
+                                            .environmentObject(self.store)
+                                            .frame(minWidth: 300, minHeight: 500)
+                        }
+                        Text(self.store.name(for: theme) ?? "").bold().foregroundColor(Color(theme.color))
+                        Text("\(theme.cardShow()) pairs of \(theme.emojiString())")
                     }
-
                 }
                 .onDelete { indexSet in
                     indexSet.map { self.store.themes[$0]}.forEach { theme in

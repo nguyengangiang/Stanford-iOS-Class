@@ -13,7 +13,6 @@ import Foundation
 class EmojiMemoryGame: ObservableObject {
     @Published private var model: MemoryGame<String>
     @Published private var theme: Theme
-
 //    init(theme: Theme) {
 //        self.theme = theme
 //        self.model = EmojiMemoryGame.createMemoryGame(theme: theme)
